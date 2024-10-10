@@ -1,0 +1,15 @@
+#home-page {
+  .MuiFab-root {
+    top: 40rem;
+    float: right;
+  }
+  #new-recommandation {
+    margin-top: 4%;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .MuiCard-root {
+    margin-top: 100px;
+    width: 20%;
+  }
+}

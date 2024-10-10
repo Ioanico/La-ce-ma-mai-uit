@@ -13,17 +13,14 @@ const RegisterForm = () => {
 
   const onNameChange = (event) => {
     setName(event.target.value);
-    console.log("Email:", event.target.value);
   };
 
   const onEmailChange = (event) => {
     setEmail(event.target.value);
-    console.log(event.target.value);
   };
 
   const onPasswordChange = (event) => {
     setPassword(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleSubmit = (e) => {
