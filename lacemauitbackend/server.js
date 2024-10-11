@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import UserModel from "./models/user.js";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 const app = express();
@@ -20,10 +21,34 @@ app.get("/", (req, res) => {
   res.json("merge get");
 });
 
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  UserModel.findOne({ email: email }).then((user) => {
+    if (user) {
+      bcrypt.compare(password, user.password, (err, response) => {
+        if (err) {
+          res.json("passwrod no good");
+        }
+        if (response) {
+          res.json("success");
+        }
+      });
+    } else {
+      res.json("no such user");
+    }
+  });
+});
+
 app.post("/register", (req, res) => {
-  UserModel.create(req.body)
-    .then((users) => res.json(users))
-    .catch((err) => res.json(err));
+  const { name, password, email } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      UserModel.create({ name, email, password: hash })
+        .then((users) => res.json(users))
+        .catch((err) => res.json(err));
+    })
+    .catch((err) => console.log(err.message));
 });
 
 app.listen(port, () => {
