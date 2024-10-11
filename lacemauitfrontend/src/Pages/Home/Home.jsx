@@ -9,6 +9,7 @@ import { useState } from "react";
 const Home = () => {
   const [open, setOpen] = useState(false);
   const [movies, setMovies] = useState([]);
+  const [apiMovies, setApiMovies] = useState([]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -51,3 +52,5 @@ const Home = () => {
 };
 
 export default Home;
+
+// http://www.omdbapi.com/?i=tt3896198&apikey=ea664072

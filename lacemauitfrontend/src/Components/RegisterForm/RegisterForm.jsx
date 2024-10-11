@@ -5,8 +5,10 @@ import { Button } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import { LockIcon } from "@mui/icons-material/Lock";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +34,7 @@ const RegisterForm = () => {
         password,
       })
       .then((res) => console.log(res).catch((err) => console.log(err)));
+    navigate("/login");
   };
 
   return (

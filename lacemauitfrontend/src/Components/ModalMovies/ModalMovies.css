@@ -1,9 +1,31 @@
 #modal-movies {
+  /* intregul modal */
   .MuiBox-root {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     flex-direction: column;
+    width: 20rem;
+    border-radius: 15px;
+    margin-top: 190px;
+    background-color: white;
+  }
+  /* textfield */
+  .MuiFormControl-root {
+    margin-top: 40px;
+    .MuiInputBase-input {
+      color: rgb(134, 50, 202);
+    }
+  }
+  /* stelele */
+  .css-dqr9h-MuiRating-label {
+    margin-top: 20px;
+    color: rgba(134, 50, 202, 0.829);
+  }
+  .MuiButtonBase-root {
+    margin: 20px 0 20px 0;
   }
 }
+
+/* rgb(134, 50, 202); */

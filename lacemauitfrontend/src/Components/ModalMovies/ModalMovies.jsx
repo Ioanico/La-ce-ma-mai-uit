@@ -51,7 +51,7 @@ const ModalMovies = ({ open, onClose, onSave }) => {
             name="title"
             id="outlined-basic"
             variant="outlined"
-            label="ceva1"
+            label="Titlu"
             value={formData.title}
             onChange={handleChange}
             required
@@ -60,7 +60,7 @@ const ModalMovies = ({ open, onClose, onSave }) => {
             name="description"
             id="outlined-basic"
             variant="outlined"
-            label="ceva2"
+            label="Descriere"
             value={formData.description}
             onChange={handleChange}
             required
@@ -69,7 +69,7 @@ const ModalMovies = ({ open, onClose, onSave }) => {
             name="lastSeen"
             id="outlined-basic"
             variant="outlined"
-            label="ceva3"
+            label="Ultima oara vazut"
             value={formData.lastSeen}
             onChange={handleChange}
             required
@@ -83,12 +83,15 @@ const ModalMovies = ({ open, onClose, onSave }) => {
           ></Rating>
 
           <Button
+            variant="outlined"
             onClick={() => {
               handleSave(), onClose();
             }}
           >
             Add
           </Button>
+
+          <Button variant="outlined">Magie (soon)</Button>
         </Box>
       </Modal>
     </div>

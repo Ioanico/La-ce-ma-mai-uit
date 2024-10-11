@@ -6,10 +6,19 @@
   #new-recommandation {
     margin-top: 4%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
   }
   .MuiCard-root {
     margin-top: 100px;
     width: 20%;
+  }
+  #new-recommandation {
+    .MuiTypography-root {
+      margin-top: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.137);
+    }
+    .MuiRating-root {
+      margin-top: 10px;
+    }
   }
 }

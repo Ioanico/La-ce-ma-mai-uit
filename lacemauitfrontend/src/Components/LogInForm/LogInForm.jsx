@@ -10,21 +10,28 @@ import { ClassNames } from "@emotion/react";
 
 const LogInForm = () => {
   const navigate = useNavigate();
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onEmailChange = (event) => {
     setEmail(event.target.value);
-    console.log("Email:", event.target.value);
   };
 
   const onPasswordChange = (event) => {
     setPassword(event.target.value);
-    console.log("Pass: ", event.target.value);
   };
 
-  const goToHome = () => {
-    navigate("/home");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:3000/login", { email, password })
+      .then((result) => {
+        console.log(result);
+        if (result.status === 200) {
+          navigate("/home");
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -49,7 +56,7 @@ const LogInForm = () => {
           Forgot password?
         </a>
 
-        <Button variant="contained" onClick={goToHome}>
+        <Button variant="contained" onClick={handleSubmit}>
           Login
         </Button>
 
