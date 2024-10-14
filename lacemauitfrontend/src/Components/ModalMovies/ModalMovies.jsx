@@ -10,20 +10,34 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
 
-//TODO : Save rating stars upon creating recommandation
-//       Make styles prettiier / not so urgent
-//       AUTH - AUTHENTICATION --- urgent
-
-const ModalMovies = ({ open, onClose, onSave }) => {
+const ModalMovies = ({ open, onClose, onSave, addFetchedMovies }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     lastSeen: "",
-    rating: "",
+    rating: null,
   });
 
-  const [value, setValue] = useState(2);
+  const fetchMoviesFromOMDB = async () => {
+    const apiKey = "ea664072";
+    const searchQuery = "Tarzan";
+
+    try {
+      const response = await axios.get(
+        `https://www.omdbapi.com/?s=${searchQuery}&apikey=${apiKey}&type=movie`
+      );
+      if (response.data.Search) {
+        const fetchedMovies = response.data.Search.slice(0, 1);
+        addFetchedMovies(fetchedMovies);
+      } else {
+        console.log("movies not found");
+      }
+    } catch (error) {
+      console.log("error fetching movies", error);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +49,7 @@ const ModalMovies = ({ open, onClose, onSave }) => {
 
   const handleSave = (e) => {
     onSave(formData);
-    setFormData({ title: "", description: "", lastSeen: "" });
+    setFormData({ title: "", description: "", lastSeen: "", rating: "" });
     onClose();
   };
 
@@ -76,10 +90,8 @@ const ModalMovies = ({ open, onClose, onSave }) => {
           />
 
           <Rating
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue), handleRatingChange(newValue);
-            }}
+            value={formData.rating}
+            onChange={handleRatingChange}
           ></Rating>
 
           <Button
@@ -91,7 +103,14 @@ const ModalMovies = ({ open, onClose, onSave }) => {
             Add
           </Button>
 
-          <Button variant="outlined">Magie (soon)</Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              onClose(), fetchMoviesFromOMDB();
+            }}
+          >
+            Magie (soon)
+          </Button>
         </Box>
       </Modal>
     </div>

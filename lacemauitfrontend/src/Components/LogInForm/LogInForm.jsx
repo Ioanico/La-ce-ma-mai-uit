@@ -27,7 +27,7 @@ const LogInForm = () => {
       .post("http://localhost:3000/login", { email, password })
       .then((result) => {
         console.log(result);
-        if (result.status === 200) {
+        if (result.data === "success") {
           navigate("/home");
         }
       })
