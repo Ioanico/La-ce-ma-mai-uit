@@ -10,15 +10,18 @@
   }
   .MuiCard-root {
     margin-top: 100px;
-    width: 20%;
+    width: 15%;
   }
   #new-recommandation {
     .MuiTypography-root {
       margin-top: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.137);
+      /* border: 1px solid rgba(0, 0, 0, 0.137); */
     }
     .MuiRating-root {
       margin-top: 10px;
+    }
+    img {
+      width: 150px;
     }
   }
 }

@@ -1,56 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ModalMovies.css";
-import {
-  Modal,
-  Card,
-  Box,
-  Button,
-  TextField,
-  Rating,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+import { Modal, Box, Button, TextField, Rating } from "@mui/material";
 import axios from "axios";
 
-const ModalMovies = ({ open, onClose, onSave, addFetchedMovies }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    lastSeen: "",
-    rating: null,
-  });
+const ModalMovies = ({ open, onClose, addFetchedMovies }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [rating, setRating] = useState(null);
 
-  const fetchMoviesFromOMDB = async () => {
+  const fetchMovieDetails = async () => {
     const apiKey = "ea664072";
-    const searchQuery = "Tarzan";
-
     try {
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${searchQuery}&apikey=${apiKey}&type=movie`
+        `https://www.omdbapi.com/?t=${searchQuery}&apikey=${apiKey}&type=movie`
       );
-      if (response.data.Search) {
-        const fetchedMovies = response.data.Search.slice(0, 1);
-        addFetchedMovies(fetchedMovies);
+      if (response.data && response.data.Response === "True") {
+        const movieData = {
+          Title: response.data.Title,
+          Year: response.data.Year,
+          Poster: response.data.Poster,
+          rating: rating,
+        };
+        addFetchedMovies(movieData);
+        setSearchQuery("");
+        setRating(null);
+        onClose(); //
       } else {
-        console.log("movies not found");
+        console.log("Movie not found");
       }
     } catch (error) {
-      console.log("error fetching movies", error);
+      console.log("Error fetching movie details", error);
     }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleRatingChange = (e, newValue) => {
-    setFormData({ ...formData, rating: newValue });
-  };
-
-  const handleSave = (e) => {
-    onSave(formData);
-    setFormData({ title: "", description: "", lastSeen: "", rating: "" });
-    onClose();
   };
 
   return (
@@ -62,54 +41,18 @@ const ModalMovies = ({ open, onClose, onSave, addFetchedMovies }) => {
       >
         <Box>
           <TextField
-            name="title"
-            id="outlined-basic"
             variant="outlined"
-            label="Titlu"
-            value={formData.title}
-            onChange={handleChange}
+            label="Movie Title"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             required
           />
-          <TextField
-            name="description"
-            id="outlined-basic"
-            variant="outlined"
-            label="Descriere"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            name="lastSeen"
-            id="outlined-basic"
-            variant="outlined"
-            label="Ultima oara vazut"
-            value={formData.lastSeen}
-            onChange={handleChange}
-            required
-          />
-
           <Rating
-            value={formData.rating}
-            onChange={handleRatingChange}
-          ></Rating>
-
-          <Button
-            variant="outlined"
-            onClick={() => {
-              handleSave(), onClose();
-            }}
-          >
+            value={rating}
+            onChange={(e, newValue) => setRating(newValue)}
+          />
+          <Button variant="outlined" onClick={fetchMovieDetails}>
             Add
-          </Button>
-
-          <Button
-            variant="outlined"
-            onClick={() => {
-              onClose(), fetchMoviesFromOMDB();
-            }}
-          >
-            Magie (soon)
           </Button>
         </Box>
       </Modal>

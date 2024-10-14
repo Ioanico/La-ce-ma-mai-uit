@@ -8,8 +8,7 @@ import { useState } from "react";
 
 const Home = () => {
   const [open, setOpen] = useState(false);
-  const [movies, setMovies] = useState([]);
-  const [moviesFromApi, setMoviesFromApi] = useState([]);
+  const [movies, setMovies] = useState([]); // Store all movies
 
   const handleOpen = () => {
     setOpen(true);
@@ -19,12 +18,8 @@ const Home = () => {
     setOpen(false);
   };
 
-  const handleSave = (newMovie) => {
-    setMovies([...movies, newMovie]);
-  };
-
-  const addFetchedMovies = (fetchedMovies) => {
-    setMoviesFromApi(fetchedMovies);
+  const addFetchedMovies = (newMovie) => {
+    setMovies([...movies, newMovie]); // Add new movie to the list
   };
 
   return (
@@ -37,31 +32,17 @@ const Home = () => {
       <ModalMovies
         open={open}
         onClose={handleClose}
-        onSave={handleSave}
         addFetchedMovies={addFetchedMovies}
-      ></ModalMovies>
+      />
+
       <div id="new-recommandation">
         {movies.map((movie, index) => (
           <Card key={index} container={document.getElementById("modal-movies")}>
             <CardContent>
-              <Typography variant="h5">{movie.title}</Typography>
-              <Typography variant="h5">{movie.description}</Typography>
-              <Typography variant="h5">{movie.lastSeen}</Typography>
-              <Rating readOnly value={movie.rating}></Rating>
-            </CardContent>
-          </Card>
-        ))}
-
-        {moviesFromApi.map((movie, index) => (
-          <Card key={index} container={document.getElementById("modal-movies")}>
-            <CardContent>
               <Typography variant="h5">{movie.Title}</Typography>
-              <Typography variant="h5">{movie.Year}</Typography>
-              <img
-                src={movie.Poster}
-                alt={movie.Title}
-                style={{ width: "100px" }}
-              />
+              <Typography variant="subtitle1">{movie.Year}</Typography>
+              <img src={movie.Poster} alt={movie.Title} />
+              <Rating readOnly value={movie.rating} />
             </CardContent>
           </Card>
         ))}
@@ -71,5 +52,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// http://www.omdbapi.com/?i=tt3896198&apikey=ea664072
