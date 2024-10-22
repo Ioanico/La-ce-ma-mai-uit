@@ -3,15 +3,39 @@ import "./LogInForm.css";
 import { InputAdornment, TextField } from "@mui/material";
 import { Button } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-import { LockIcon } from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ClassNames } from "@emotion/react";
+import {
+  doSignInWithEmailAndPassword,
+  doSignInWithGoogle,
+} from "../../firebase/auth";
+import { useAuth } from "../../contexts/authContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LogInForm = () => {
   const navigate = useNavigate();
+  // const { userLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignedin, setIsSignedIn] = useState(false);
+
+  const badInfoToast = () => {
+    toast.error("Wrong Email or Password", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      // transition: Bounce,
+    });
+  };
 
   const onEmailChange = (event) => {
     setEmail(event.target.value);
@@ -21,17 +45,16 @@ const LogInForm = () => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3000/login", { email, password })
-      .then((result) => {
-        console.log(result);
-        if (result.data === "success") {
-          navigate("/home");
-        }
-      })
-      .catch((err) => console.log(err));
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("user logged in");
+      navigate("/home");
+    } catch (error) {
+      console.log("bad info");
+      badInfoToast();
+    }
   };
 
   return (
@@ -41,6 +64,7 @@ const LogInForm = () => {
         <div className="line"></div>
         <TextField
           id="standard-basic"
+          value={email}
           variant="standard"
           onChange={onEmailChange}
           label="Enter your email"
@@ -48,6 +72,7 @@ const LogInForm = () => {
 
         <TextField
           id="standard-basic"
+          value={password}
           variant="standard"
           onChange={onPasswordChange}
           label="Enter your Password"
@@ -66,9 +91,20 @@ const LogInForm = () => {
       </div>
       <div className="photo">
         <h1>Get Watching</h1>
-        <div className="line_photo"></div>
+        <div className="line-photo"></div>
         <h1>We've Got the Picks</h1>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Home = () => {
   };
 
   const addFetchedMovies = (newMovie) => {
-    setMovies([...movies, newMovie]); // Add new movie to the list
+    setMovies([...movies, newMovie]);
   };
 
   return (

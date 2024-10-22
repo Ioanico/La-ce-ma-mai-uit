@@ -1,0 +1,20 @@
+#user-profile {
+  .MuiModal-root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 1px solid black; */
+  }
+  .MuiBox-root {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 0 auto;
+    padding: 0 20px 20px 20px;
+    background-color: white;
+    border-radius: 15px;
+  }
+  .MuiTypography-root {
+    margin-top: 20px;
+  }
+}

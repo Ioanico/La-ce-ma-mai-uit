@@ -6,78 +6,88 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
+import { auth, db } from "../../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import "./NavBar.css";
+import { Icon } from "@mui/material";
+import ModalUserProfile from "../UserProfile/ModalUserProfile";
 
-export default function MenuAppBar() {
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+export default function NavBar() {
+  const [auth, setAuth] = useState(getAuth());
+  const [userDetails, setUserDetails] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpen = () => {
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
   };
 
+  // console.log(auth);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // console.log(auth);
+        // console.log("User:", user);
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap) {
+          setUserDetails(docSnap.data());
+          console.log(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+      } else {
+        console.log("User not logged in");
+      }
+    });
+  }, []);
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Photos
-          </Typography>
-          {auth && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <div className="nav-bar">
+      <ModalUserProfile
+        open={open}
+        onClose={handleClose}
+        userDetails={userDetails}
+      />
+
+      <Box sx={{ flexGrow: 1 }} container={document.getElementById("nav-bar")}>
+        <AppBar position="fixed">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Photos
+            </Typography>
+            {userDetails ? (
+              <>
+                <h1>Welcome {userDetails.name}</h1>
+                <IconButton onClick={handleOpen}>
+                  <AccountCircle />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <h1></h1>
+              </>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </div>
   );
 }

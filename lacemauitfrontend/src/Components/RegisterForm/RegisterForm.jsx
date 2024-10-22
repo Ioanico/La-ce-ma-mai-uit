@@ -3,9 +3,12 @@ import "./RegisterForm.css";
 import { InputAdornment, TextField } from "@mui/material";
 import { Button } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-import { LockIcon } from "@mui/icons-material/Lock";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../firebase/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { ToastContainer, toast } from "react-toastify";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -25,20 +28,29 @@ const RegisterForm = () => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3000/register", {
-        name,
-        email,
-        password,
-      })
-      .then((res) => console.log(res).catch((err) => console.log(err)));
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      console.log(user);
+      if (user) {
+        await setDoc(doc(db, "Users", user.uid), {
+          email: user.email,
+          name: name,
+        });
+      }
+      toast.success("User registered", { position: "top-center" });
+      console.log("user registered successfully");
+    } catch (error) {
+      toast.success(error.message, { position: "bottom-center" });
+      console.log("error");
+    }
     navigate("/login");
   };
 
   return (
-    <div className="container-register">
+    <div id="container-register">
       <div className="register">
         <h1>Register</h1>
 
@@ -65,7 +77,7 @@ const RegisterForm = () => {
           label="Enter your Password"
         ></TextField>
 
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="contained" onClick={handleRegister}>
           Register
         </Button>
 
