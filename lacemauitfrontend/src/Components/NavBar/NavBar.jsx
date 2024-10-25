@@ -12,10 +12,15 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import "./NavBar.css";
-import { Icon } from "@mui/material";
+import { Button, Icon } from "@mui/material";
 import ModalUserProfile from "../UserProfile/ModalUserProfile";
+import ModalCreatGroup from "../ModalCreateGroup/ModalCreatGroup";
+import ModalOpenGroup from "../ModalOpenGroup/ModalOpenGroup";
 
 export default function NavBar() {
+  const [openCreateGroup, setOpenCreateGroup] = useState(false);
+  const [openGroupModal, setOpenGroupModal] = useState(false);
+  const [isInGroup, setIsInGroup] = useState(false);
   const [auth, setAuth] = useState(getAuth());
   const [userDetails, setUserDetails] = useState(null);
   const [open, setOpen] = useState(false);
@@ -50,6 +55,17 @@ export default function NavBar() {
     });
   }, []);
 
+  useEffect(() => {
+    const checkUserGroup = async (user) => {
+      if (user) {
+        const userRef = doc(db, "Users", user.uid);
+        const userSnap = await getDoc(userRef);
+        setIsInGroup(userSnap.exists() && userSnap.data().groupId);
+      }
+      onAuthStateChanged(auth, checkUserGroup);
+    };
+  }, []);
+
   return (
     <div className="nav-bar">
       <ModalUserProfile
@@ -57,6 +73,16 @@ export default function NavBar() {
         onClose={handleClose}
         userDetails={userDetails}
       />
+
+      <ModalCreatGroup
+        open={openCreateGroup}
+        onClose={() => setOpenCreateGroup(false)}
+      ></ModalCreatGroup>
+
+      <ModalOpenGroup
+        open={openGroupModal}
+        onClose={() => setOpenGroupModal(false)}
+      ></ModalOpenGroup>
 
       <Box sx={{ flexGrow: 1 }} container={document.getElementById("nav-bar")}>
         <AppBar position="fixed">
@@ -73,6 +99,22 @@ export default function NavBar() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Photos
             </Typography>
+            {isInGroup && (
+              <Button
+                variant="contained"
+                onClick={() => setOpenGroupModal(true)}
+              >
+                Open Group
+              </Button>
+            )}
+
+            <Button
+              variant="contained"
+              onClick={() => setOpenCreateGroup(true)}
+            >
+              Create Group
+            </Button>
+
             {userDetails ? (
               <>
                 <h1>Welcome {userDetails.name}</h1>
@@ -81,9 +123,7 @@ export default function NavBar() {
                 </IconButton>
               </>
             ) : (
-              <>
-                <h1></h1>
-              </>
+              <></>
             )}
           </Toolbar>
         </AppBar>

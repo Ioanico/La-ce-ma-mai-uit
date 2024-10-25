@@ -1,6 +1,12 @@
 .MuiToolbar-root {
   .MuiSvgIcon-fontSizeMedium {
+    display: flex;
     margin-left: 20px;
     font-size: 34px;
+  }
+  .MuiButton-contained {
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: rgb(54, 56, 224);
   }
 }
